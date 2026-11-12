@@ -6,7 +6,8 @@ import android.content.ServiceConnection
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
-import android.widget.Button
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.TextView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -14,15 +15,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-
-    val startButton : Button by lazy {
-        findViewById(R.id.startButton)
-    }
-
-    val stopButton : Button by lazy {
-        findViewById(R.id.stopButton)
-    }
-
     val timerTextView : TextView by lazy {
         findViewById(R.id.textView)
     }
@@ -57,22 +49,22 @@ class MainActivity : AppCompatActivity() {
             BIND_AUTO_CREATE
         )
 
-        startButton.setOnClickListener {
-            timerBinder?.run {
-                if (!isRunning) {
-                    start(100)
-                    startButton.text = "Pause"
-                }
-                else {
-                    pause()
-                    startButton.text = if (isPaused) "Resume" else "Pause"
-                }
-            }
-        }
-        
-        stopButton.setOnClickListener {
-            timerBinder?.stop()
-            startButton.text = "Start"
-        }
     }
-}
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+            R.id.action_start_timer -> {
+                timerBinder?.start(100)
+                true
+            }
+            R.id.action_stop_timer -> {
+                timerBinder?.stop()
+                true
+            }
+            else -> false
+            }
+    }
